@@ -45,7 +45,6 @@ class RemoteCommand:
 		look = "ping " + self.nameUser 
 		os.system(look)
 
-
 	def restartPassword(self):
 		self.printGreen("Podaj Nowe Hasło: ")
 		password = input()
@@ -148,8 +147,6 @@ class RemoteCommand:
 		
 
 
-
-
-
+##Wywołanie##
 remoteCommand = RemoteCommand()
 remoteCommand.funk()
