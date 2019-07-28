@@ -143,8 +143,7 @@ class RemoteCommand:
 		self.inputs()
 		self.menu()
 
-
-		
+	
 
 
 ##Wywołanie##
