@@ -1,4 +1,4 @@
-import os
+﻿import os
 from colorama import init, Fore, Back, Style 
 
 init(convert=True)
