@@ -1,55 +1,51 @@
 ﻿import os
+import random
 from colorama import init, Fore, Back, Style 
 
 init(convert=True)
 
 class RemoteCommand:
 	def __init__(self):
-		self.name = ""
+		self.nameOfComputer = ""
 		self.nameUser = ""
 
-	def funkInfo(self):
-		data = "net user " + self.nameUser + " /DOMAIN > LOGI\\InformacjeOUzytkowniku.txt"
-		os.system(data)
+	def validate(self):
+		if(len(self.nameOfComputer) <= 3 and len(self.nameUser) <= 3):
+			print("Podaj nazwę użytkownika i nazwę komputera dłuższą niż 3 znaki")
+			self.inputs()
 
-	def systemInfo(self):
-		data = "psexec \\\\" + self.name + " systeminfo > LOGI\\SystemInfo.txt"
-		print(data)
+	def commandInDomain(self, phrase1, phrase2, phrase3):
+		data = phrase1 + self.nameOfComputer + phrase2 + phrase3
 		os.system(data)
-		#text = open('LOGI\\test2.txt', 'rb').read()
+		look = phrase1 + self.nameOfComputer + phrase2
+		os.system(look)
 
-	def funkRoute(self):
-		data = "psexec \\\\" + self.name + " route print > LOGI\\TablicaRutingow.txt"
-		print(str(data))
+	def commandRemoteDesktop(self, phrase1, phrase2):
+		data = "psexec \\\\" + self.nameOfComputer + phrase1 + phrase2
 		os.system(data)
+		look = "psexec \\\\"  + self.nameOfComputer + phrase1
+		os.system(look)
 
 	def ipConfig(self):
 		data = "psexec \\\\" + self.name + " ipconfig /flushdns > LOGI\\test4.txt"
 		os.system(data)	
 
-	def refresh(self):
-		data = "psexec \\\\" + self.name + " GPUPDATE /force > LOGI\\POTWIERDZENIE\\potwierdzenieUpdateForce.txt"
-		os.system(data)
-		data2 = "psexec \\\\" + self.name + " ipconfig /flushdns > LOGI\\POTWIERDZENIE\\potwierdzenieFlushDNS.txt"
-		os.system(data2)	
-		data3 = "psexec \\\\" + self.name + " ipconfig /registerdns > LOGI\\POTWIERDZENIE\\potwierdzenieRegisterDNS.txt"
-		os.system(data3)
-		data4 = "psexec \\\\" + self.name + " ipconfig /release > LOGI\\POTWIERDZENIE\\potwierdzenieIpconfigRelease.txt"
-		os.system(data4)	
-		data5 = "psexec \\\\" + self.name + " ipconfig /renew > LOGI\\POTWIERDZENIE\\potwierdzenieIpconfigReNew.txt"
-		os.system(data5)
-	
-	def ping(self):
-		data = "ping " + self.nameUser + " > LOGI\\InformacjeOUzytkowniku.txt"
-		os.system(data)
-		look = "ping " + self.nameUser 
-		os.system(look)
 
 	def restartPassword(self):
 		self.printGreen("Podaj Nowe Hasło: ")
 		password = input()
 		data = "net user " + self.nameUser + password +" /DOMAIN > LOGI\\POTWIERDZENIE\\potwierdzenieZmianyHasla.txt"
 		os.system(data)
+
+	def password(self, i, tab):
+		chars = ["A", "a", "B", "b", "C", "c", "D", "d", "E", "e", "F", "f", "H", "h", "I", "i", "J", "j", "K", "k",
+		 "L", "l", "M", "m", "N", "n", "O", "o", "P", "p", "Q", "q", "R", "r", "S", "s", "T", "t", "U", "u", "V", "v", 
+		 "W", "w", "X", "x", "Y", "y", "Z", "z", "1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "(", ")", "[", "]", 
+		 "{", "}", "-", "_", "<", ">"]
+		if(i < 30):
+			tab.append(random.choice(chars))
+			return self.password(i+1, tab)
+		print("".join(tab));
 
 ###  Style tekstow  ###
 	def printGreen(self, text):
@@ -84,6 +80,45 @@ class RemoteCommand:
 		print(Fore.BLUE + text)
 		print(Style.RESET_ALL)
 
+	def menu2(self):
+		self.printRed("-" * 50)
+		self.printBackGreen("""
+1. Mapuj Dysk T: \n
+2. Mapuj Dysk ... \n
+3. Mapuj Dysk Osobisty... \n""")
+		self.printBackRed("4. Zmień użytkownika/ Komputer") 
+		self.printBackRed("5. Wróć do Menu głównego") 
+		self.printRed("-" * 50)
+
+		self.printBackYellow("Aktualnie operujesz na komputerze / uzytkowniku: ")
+		self.printBackCyan(self.nameOfComputer , " / " , self.nameUser)
+		self.printRed("-" * 50)
+		self.printYellow("Podaj numer:")
+		option = int(input())
+		if(option == 1):
+			self.commandRemoteDesktop(" net use t: /delete", "")
+			self.commandRemoteDesktop(" net use t: \\\\DOMENA\\DyskT /persistent:NO", " > LOGI\\mapujDyskT.txt")
+			self.printGreen("Polecenie 1. Mapuj Dysk Sieciowy T: - zostalo wykonane pomyslnie")
+		elif(option == 2):
+			self.commandRemoteDesktop(" systeminfo", "  > LOGI\\SystemInfo.txt")
+			self.printGreen("Polecenie 2.  Mapuj Dysk Sieciowy ...:: - zostalo wykonane pomyslnie")
+		elif(option == 3):
+			self.commandRemoteDesktop(" route print", " > LOGI\\TablicaRutingow.txt")
+			self.printGreen("Polecenie 3.  Mapuj Dysk Sieciowy ...: - zostalo wykonane pomyslnie")
+
+		elif(option == 4):
+			self.inputs()
+			self.printGreen("Polecenie 4. Zmiana nazwy uzytkownika/komputera - zostalo wykonane pomyslnie")
+			self.printRed("Nowa nazwa komputera: ")
+			print(self.nameOfComputer)
+			self.printRed("Nowa nazwa użytkownika: ")
+			print(self.nameUser)
+		elif(option == 5):
+			self.menu()
+		else:
+			self.printRed("Podaj inna wartosc \n")
+		self.menu2()
+
 	def menu(self):
 		self.printRed("-" * 50)
 		self.printBackGreen("""
@@ -91,43 +126,50 @@ class RemoteCommand:
 2. System Info - Informacje o komputerze \n
 3. Tablica Rutingow \n
 4. Oczyszczenie DNS, DHCP i aktualizacja rejestru \n
-5. Zmiana hasla uzytkownikowi
-6. Pingowanie""")
-		self.printBackRed("8. Zmien nazwe komputera i uzytkownik") 
-		self.printBackRed("9. Wyjdź")
+5. Zmiana hasla uzytkownikowi \n
+6. Pingowanie \n
+7. Generator Hasła\n
+8. Mapowanie Dysków sieciowych""")
+		self.printBackRed("14. Zmien nazwe komputera i uzytkownik") 
+		self.printBackRed("15. Wyjdź")
 		self.printRed("-" * 50)
 
 		self.printBackYellow("Aktualnie operujesz na komputerze / uzytkowniku: ")
-		self.printBackCyan(self.name , " / " , self.nameUser)
+		self.printBackCyan(self.nameOfComputer , " / " , self.nameUser)
 		self.printRed("-" * 50)
 		self.printYellow("Podaj numer:")
 		option = int(input())
 		if(option == 1):
-			self.funkInfo()
+			self.commandInDomain("net user ", " /DOMAIN", " > LOGI\\netUserCommand.txt")
 			self.printGreen("Polecenie 1. Informacje o uzytkowniku - zostalo wykonane pomyslnie")
 		elif(option == 2):
-			self.systemInfo()
+			self.commandRemoteDesktop(" systeminfo", "  > LOGI\\SystemInfo.txt")
 			self.printGreen("Polecenie 2. System Info - Informacje o komputerze - zostalo wykonane pomyslnie")
 		elif(option == 3):
-			self.funkRoute()
+			self.commandRemoteDesktop(" route print", " > LOGI\\TablicaRutingow.txt")
 			self.printGreen("Polecenie 3. Tablica Rutingow - zostalo wykonane pomyslnie")
 		elif(option == 4):
-			self.refresh()
+			self.commandRemoteDesktop(" systeminfo", "  > LOGI\\SystemInfo.txt")
 			self.printGreen("Polecenie 4. Oczyszczenie DNS, DHCP i aktualizacja rejestru - zostalo wykonane pomyslnie")
 		elif(option == 5):
 			self.restartPassword()
 			self.printGreen("Polecenie 5. Zmiana hasla uzytkownikowi - zostalo wykonane pomyslnie")
 		elif(option == 6):
-			self.ping()
+			self.commandInDomain("ping ", " ", " > LOGI\\pingCommand.txt")
 			self.printGreen("Polecenie 6. Pingowanie - zostalo wykonane pomyslnie")
+		elif(option == 7):
+			self.password(0, [])
+			self.printGreen("Polecenie 7. Generator hasła - zostalo wykonane pomyslnie")
 		elif(option == 8):
+			self.menu2()
+		elif(option == 14):
 			self.inputs()
-			self.printGreen("Polecenie 8. Zmiana nazwy uzytkownika/komputera - zostalo wykonane pomyslnie")
+			self.printGreen("Polecenie 14. Zmiana nazwy uzytkownika/komputera - zostalo wykonane pomyslnie")
 			self.printRed("Nowa nazwa komputera: ")
-			print(self.name)
+			print(self.nameOfComputer)
 			self.printRed("Nowa nazwa użytkownika: ")
 			print(self.nameUser)
-		elif(option == 9):
+		elif(option == 15):
 			return
 		else:
 			self.printRed("Podaj inna wartosc \n")
@@ -135,17 +177,21 @@ class RemoteCommand:
 
 	def inputs(self):
 		self.printGreen("Podaj komputer: ")
-		self.name = input()
+		self.nameOfComputer = input()
 		self.printGreen("Podaj nick: ")
 		self.nameUser = input()
+		self.validate()
 
 	def funk(self):
 		self.inputs()
 		self.menu()
 
-	
+
+		
 
 
-##Wywołanie##
+
+
+
 remoteCommand = RemoteCommand()
 remoteCommand.funk()
