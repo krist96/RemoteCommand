@@ -11,8 +11,8 @@ class RemoteCommand:
 
 	def validate(self):
 		if(len(self.nameOfComputer) <= 3 and len(self.nameUser) <= 3):
-			print("Podaj nazwę użytkownika i nazwę komputera dłuższą niż 3 znaki")
-			self.inputs()
+		    print("Podaj nazwę użytkownika i nazwę komputera dłuższą niż 3 znaki")
+            self.inputs()
 
 	def commandInDomain(self, phrase1, phrase2, phrase3):
 		data = phrase1 + self.nameOfComputer + phrase2 + phrase3
@@ -185,10 +185,6 @@ class RemoteCommand:
 	def funk(self):
 		self.inputs()
 		self.menu()
-
-
-		
-
 
 
 
